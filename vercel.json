@@ -1,7 +1,9 @@
 {
   "version": 2,
   "public": true,
+  "name": "graduation-countdown",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  "cleanUrls": true
 }
