@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { TANGGAL_KELULUSAN } from "@/data/siswa";
+import { fetchGraduationDate, TANGGAL_KELULUSAN_FALLBACK } from "@/data/siswa";
 
-function calc() {
-  const diff = TANGGAL_KELULUSAN.getTime() - Date.now();
+function calc(target: Date) {
+  const diff = target.getTime() - Date.now();
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
   return {
     days:    Math.floor(diff / 86400000),
@@ -51,19 +51,37 @@ function Block({ value, label }: { value: number; label: string }) {
 }
 
 export function CountdownTimer() {
-  const [t, setT] = useState(calc);
+  const [target, setTarget] = useState<Date>(TANGGAL_KELULUSAN_FALLBACK);
+  const [t, setT] = useState(() => calc(target));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const id = setInterval(() => setT(calc()), 1000);
-    return () => clearInterval(id);
+    fetchGraduationDate().then(date => {
+      setTarget(date);
+      setT(calc(date));
+      setLoading(false);
+    });
   }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setT(calc(target)), 1000);
+    return () => clearInterval(id);
+  }, [target]);
+
+  if (loading) {
+     return (
+       <div className="flex justify-center items-center py-10 opacity-30">
+         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
+       </div>
+     );
+  }
 
   return (
     <div className="text-center">
       <p className="text-sm mb-5" style={{ color: "hsl(195 30% 30%)" }}>
         Waktu menuju hari kelulusan &mdash;{" "}
         <span className="font-semibold" style={{ color: "hsl(195 100% 40%)" }}>
-          {TANGGAL_KELULUSAN.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+          {target.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
         </span>
       </p>
 

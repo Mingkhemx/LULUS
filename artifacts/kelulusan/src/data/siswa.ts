@@ -56,7 +56,28 @@ export async function updateSiswa(nisn: string, updates: Partial<Siswa>): Promis
   return { success: true };
 }
 
-export const TANGGAL_KELULUSAN = new Date("2026-05-17T09:00:00");
+// Settings: Graduation Date
+export async function fetchGraduationDate(): Promise<Date> {
+  const { data, error } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", "tanggal_kelulusan")
+    .single();
+
+  if (error || !data) return new Date("2026-05-17T09:00:00");
+  return new Date(data.value);
+}
+
+export async function updateGraduationDate(dateStr: string): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase
+    .from("settings")
+    .upsert({ key: "tanggal_kelulusan", value: dateStr });
+  
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+export const TANGGAL_KELULUSAN_FALLBACK = new Date("2026-05-17T09:00:00");
 
 export const INFO_SEKOLAH = {
   nama: "SMK Negeri Pringsurat",
