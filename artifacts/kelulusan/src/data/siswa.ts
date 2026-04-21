@@ -1,27 +1,60 @@
+import { supabase } from "@/lib/supabase";
+
 export interface Siswa {
+  id?: string;
   nisn: string;
   nama: string;
   kelas: string;
   jurusan: string;
-  foto?: string;
-  nilai?: number;
-  predikat?: string;
+  foto?: string | null;
+  nilai?: number | null;
+  predikat?: string | null;
   status: "LULUS" | "TIDAK_LULUS";
 }
 
-export const dataSiswa: Siswa[] = [
-  { nisn: "1234567890", nama: "Ahmad Rizki Pratama", kelas: "XII IPA 1", jurusan: "Ilmu Pengetahuan Alam", nilai: 89.5, predikat: "Sangat Baik", status: "LULUS", foto: "/foto-siswa.jpg" },
-  { nisn: "1234567891", nama: "Siti Nurhaliza Rahmah", kelas: "XII IPA 2", jurusan: "Ilmu Pengetahuan Alam", nilai: 92.3, predikat: "Sangat Baik", status: "LULUS" },
-  { nisn: "1234567892", nama: "Budi Santoso Wijaya", kelas: "XII IPS 1", jurusan: "Ilmu Pengetahuan Sosial", nilai: 85.7, predikat: "Baik", status: "LULUS" },
-  { nisn: "1234567893", nama: "Dewi Kusuma Wardani", kelas: "XII IPS 2", jurusan: "Ilmu Pengetahuan Sosial", nilai: 91.2, predikat: "Sangat Baik", status: "LULUS" },
-  { nisn: "1234567894", nama: "Faisal Hakim Nugroho", kelas: "XII BAHASA", jurusan: "Bahasa dan Sastra", nilai: 87.4, predikat: "Baik", status: "LULUS" },
-  { nisn: "1234567895", nama: "Ratna Sari Dewi", kelas: "XII IPA 1", jurusan: "Ilmu Pengetahuan Alam", nilai: 94.1, predikat: "Sangat Baik", status: "LULUS" },
-  { nisn: "1234567896", nama: "Hendra Putra Wibowo", kelas: "XII IPS 1", jurusan: "Ilmu Pengetahuan Sosial", nilai: 78.9, predikat: "Baik", status: "LULUS" },
-  { nisn: "1234567897", nama: "Indah Permata Sari", kelas: "XII IPA 3", jurusan: "Ilmu Pengetahuan Alam", nilai: 88.6, predikat: "Baik", status: "LULUS" },
-  { nisn: "1234567898", nama: "Joko Purnomo Adi", kelas: "XII IPS 3", jurusan: "Ilmu Pengetahuan Sosial", nilai: 82.3, predikat: "Baik", status: "LULUS" },
-  { nisn: "1234567899", nama: "Kartika Wulandari Putri", kelas: "XII IPA 2", jurusan: "Ilmu Pengetahuan Alam", nilai: 96.5, predikat: "Sangat Baik", status: "LULUS" },
-  { nisn: "0000000001", nama: "Test Siswa Tidak Lulus", kelas: "XII IPS 1", jurusan: "Ilmu Pengetahuan Sosial", nilai: 55.0, predikat: "Kurang", status: "TIDAK_LULUS" },
-];
+// Fetch single student by NISN from Supabase
+export async function fetchSiswaByNisn(nisn: string): Promise<Siswa | null> {
+  const { data, error } = await supabase
+    .from("siswa")
+    .select("*")
+    .eq("nisn", nisn)
+    .single();
+
+  if (error || !data) return null;
+  return data as Siswa;
+}
+
+// Fetch all students from Supabase (for admin)
+export async function fetchAllSiswa(): Promise<Siswa[]> {
+  const { data, error } = await supabase
+    .from("siswa")
+    .select("*")
+    .order("nama", { ascending: true });
+
+  if (error || !data) return [];
+  return data as Siswa[];
+}
+
+// Insert a new student
+export async function insertSiswa(siswa: Omit<Siswa, "id">): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase.from("siswa").insert([siswa]);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+// Delete a student by NISN
+export async function deleteSiswa(nisn: string): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase.from("siswa").delete().eq("nisn", nisn);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+// Update a student
+export async function updateSiswa(nisn: string, updates: Partial<Siswa>): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase.from("siswa").update(updates).eq("nisn", nisn);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
 
 export const TANGGAL_KELULUSAN = new Date("2026-05-17T09:00:00");
 

@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { dataSiswa, type Siswa, INFO_SEKOLAH, TANGGAL_KELULUSAN } from "@/data/siswa";
+import { fetchSiswaByNisn, type Siswa, INFO_SEKOLAH, TANGGAL_KELULUSAN } from "@/data/siswa";
 import { ConfettiEffect } from "@/components/ConfettiEffect";
-import { SchoolSeal } from "@/components/SchoolSeal";
 
 interface Props { nisn: string; }
 
 export function HasilPage({ nisn }: Props) {
   const [, navigate] = useLocation();
   const [confetti, setConfetti] = useState(false);
-  const siswa: Siswa | undefined = dataSiswa.find(s => s.nisn === nisn);
+  const [siswa, setSiswa] = useState<Siswa | null>(null);
+  const [loading, setLoading] = useState(true);
   const lulus = siswa?.status === "LULUS";
+
+  useEffect(() => {
+    setLoading(true);
+    fetchSiswaByNisn(nisn).then((data) => {
+      setSiswa(data);
+      setLoading(false);
+    });
+  }, [nisn]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,6 +47,16 @@ export function HasilPage({ nisn }: Props) {
     }}>
       <ConfettiEffect active={confetti} />
 
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <svg className="animate-spin mx-auto mb-4" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="hsl(195 100% 45%)" strokeWidth="2.5">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+            <p className="text-sm" style={{ color: "hsl(195 20% 50%)" }}>Memuat data siswa...</p>
+          </div>
+        </div>
+      ) : (
       <div className="max-w-2xl mx-auto px-4 py-10">
 
         {/* Back link */}
@@ -242,6 +260,7 @@ export function HasilPage({ nisn }: Props) {
           </p>
         </div>
       </div>
+      )}
     </div>
   );
 }
