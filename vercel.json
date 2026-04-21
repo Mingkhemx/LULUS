@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm -w run vercel-build",
-  "outputDirectory": "artifacts/kelulusan/dist",
+  "outputDirectory": "dist",
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
