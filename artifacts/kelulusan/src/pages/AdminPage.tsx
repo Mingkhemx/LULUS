@@ -199,11 +199,26 @@ export function AdminPage() {
                 </div>
                 <div>
                   <label style={labelStyle}>Kelas *</label>
-                  <input type="text" value={kelas} onChange={e => setKelas(e.target.value)} placeholder="XII IPA 1" style={inputStyle} />
+                  <select value={kelas} onChange={e => setKelas(e.target.value)} style={inputStyle}>
+                    <option value="">— Pilih Kelas —</option>
+                    {["DKV 1", "DKV 2", "DKV 3", "TJKT 1", "TJKT 2", "TKP 1", "TKP 2", "DPIB 1", "DPIB 2"].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label style={labelStyle}>Jurusan / Program Studi *</label>
-                  <input type="text" value={jurusan} onChange={e => setJurusan(e.target.value)} placeholder="Teknik Komputer" style={inputStyle} />
+                  <select value={jurusan} onChange={e => setJurusan(e.target.value)} style={inputStyle}>
+                    <option value="">— Pilih Jurusan —</option>
+                    {[
+                      "Desain Komunikasi Visual", 
+                      "Teknik Jaringan Komputer dan Telekomunikasi", 
+                      "Teknik Konstruksi dan Perumahan", 
+                      "Desain Pemodelan dan Informasi Bangunan"
+                    ].map(j => (
+                      <option key={j} value={j}>{j}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label style={labelStyle}>URL Foto (opsional)</label>
