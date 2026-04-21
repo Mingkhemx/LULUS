@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run vercel-build",
+  "buildCommand": "pnpm -w run vercel-build",
   "outputDirectory": "artifacts/kelulusan/dist/public",
   "framework": null,
   "rewrites": [
