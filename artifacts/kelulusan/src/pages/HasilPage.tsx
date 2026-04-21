@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { fetchSiswaByNisn, type Siswa, INFO_SEKOLAH, TANGGAL_KELULUSAN } from "@/data/siswa";
+import { fetchSiswaByNisn, type Siswa, INFO_SEKOLAH, TANGGAL_KELULUSAN_FALLBACK, fetchGraduationDate } from "@/data/siswa";
 import { ConfettiEffect } from "@/components/ConfettiEffect";
 
 interface Props { nisn: string; }
@@ -10,12 +10,17 @@ export function HasilPage({ nisn }: Props) {
   const [confetti, setConfetti] = useState(false);
   const [siswa, setSiswa] = useState<Siswa | null>(null);
   const [loading, setLoading] = useState(true);
+  const [gradDate, setGradDate] = useState<Date>(TANGGAL_KELULUSAN_FALLBACK);
   const lulus = siswa?.status === "LULUS";
 
   useEffect(() => {
     setLoading(true);
-    fetchSiswaByNisn(nisn).then((data) => {
-      setSiswa(data);
+    Promise.all([
+      fetchSiswaByNisn(nisn),
+      fetchGraduationDate()
+    ]).then(([sData, gDate]) => {
+      setSiswa(sData);
+      setGradDate(gDate);
       setLoading(false);
     });
   }, [nisn]);
@@ -36,8 +41,9 @@ export function HasilPage({ nisn }: Props) {
     };
   }, [lulus]);
 
-  const tgl = TANGGAL_KELULUSAN.toLocaleDateString("id-ID", {
+  const tgl = gradDate.toLocaleDateString("id-ID", {
     day: "numeric", month: "long", year: "numeric",
+
   });
 
   return (
