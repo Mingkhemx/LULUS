@@ -100,11 +100,6 @@ export function SearchNISN() {
             </button>
           </form>
 
-          <div className="mt-4 flex items-center justify-center gap-1.5 opacity-50">
-            <div className="h-px w-8" style={{ background: "hsl(195 20% 80%)" }}></div>
-            <span className="text-[10px] uppercase tracking-widest" style={{ color: "hsl(195 20% 50%)" }}>Official Release</span>
-            <div className="h-px w-8" style={{ background: "hsl(195 20% 80%)" }}></div>
-          </div>
         </div>
       </div>
     </div>
