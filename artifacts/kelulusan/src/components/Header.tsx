@@ -1,9 +1,6 @@
-import { INFO_SEKOLAH, TANGGAL_KELULUSAN } from "@/data/siswa";
+import { INFO_SEKOLAH } from "@/data/siswa";
 
 export function Header() {
-  const tgl = TANGGAL_KELULUSAN.toLocaleDateString("id-ID", {
-    day: "numeric", month: "long", year: "numeric",
-  });
 
   return (
     <header className="relative pt-10 pb-6 px-4">
@@ -50,9 +47,6 @@ export function Header() {
           }}>
           Pengumuman<br/>Kelulusan
         </h1>
-        <p className="mt-3 text-sm" style={{ color: "hsl(195 20% 50%)" }}>
-          Hari {tgl}
-        </p>
       </div>
     </header>
   );
