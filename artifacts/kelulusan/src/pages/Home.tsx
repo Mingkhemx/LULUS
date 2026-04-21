@@ -67,6 +67,9 @@ export function Home() {
           <p className="text-xs text-center" style={{ color: "hsl(195 20% 40%)" }}>
             &copy; {new Date().getFullYear()} &mdash; Sistem Informasi Kelulusan
           </p>
+          <p className="text-[10px] text-center uppercase tracking-[0.2em] mt-2" style={{ color: "hsl(195 20% 60%)" }}>
+            Made with ❤️ by <a href="https://instagram.com/mingkhemx" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline" style={{ color: "hsl(195 100% 40%)" }}>Miki</a>
+          </p>
         </footer>
       </div>
     </div>
