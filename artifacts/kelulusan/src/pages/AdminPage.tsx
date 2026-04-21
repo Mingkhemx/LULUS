@@ -8,11 +8,11 @@ export function AdminPage() {
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
-  // Settings state
+  // State untuk pengaturan tanggal
   const [targetDate, setTargetDate] = useState("");
   const [settingLoading, setSettingLoading] = useState(false);
 
-  // Form fields
+  // Field Form Siswa
   const [nisn, setNisn] = useState("");
   const [nama, setNama] = useState("");
   const [kelas, setKelas] = useState("");
@@ -22,6 +22,7 @@ export function AdminPage() {
   const [predikat, setPredikat] = useState("");
   const [status, setStatus] = useState<"LULUS" | "TIDAK_LULUS">("LULUS");
 
+  // Memuat data awal
   async function load() {
     setLoading(true);
     const [siswaData, dateData] = await Promise.all([
@@ -29,7 +30,7 @@ export function AdminPage() {
       fetchGraduationDate()
     ]);
     setSiswaList(siswaData);
-    // Format date to YYYY-MM-DDTHH:mm for datetime-local input
+    // Format tanggal ke YYYY-MM-DDTHH:mm untuk input datetime-local
     const formattedDate = dateData.toISOString().slice(0, 16);
     setTargetDate(formattedDate);
     setLoading(false);
@@ -37,11 +38,13 @@ export function AdminPage() {
 
   useEffect(() => { load(); }, []);
 
+  // Reset form setelah simpan
   function resetForm() {
     setNisn(""); setNama(""); setKelas(""); setJurusan("");
     setFoto(""); setNilai(""); setPredikat(""); setStatus("LULUS");
   }
 
+  // Update tanggal kelulusan
   async function handleUpdateDate() {
     if (!targetDate) return;
     setSettingLoading(true);
@@ -54,6 +57,7 @@ export function AdminPage() {
     }
   }
 
+  // Submit data siswa baru
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nisn || !nama || !kelas || !jurusan) {
@@ -82,6 +86,7 @@ export function AdminPage() {
     }
   }
 
+  // Hapus data siswa
   async function handleDelete(s: Siswa) {
     if (!confirm(`Hapus data ${s.nama} (${s.nisn})?`)) return;
     const result = await deleteSiswa(s.nisn);
@@ -93,6 +98,7 @@ export function AdminPage() {
     }
   }
 
+  // Styling Input Dasar
   const inputStyle: React.CSSProperties = {
     background: "hsl(195 20% 98%)",
     border: "1px solid hsl(195 20% 86%)",
@@ -104,6 +110,7 @@ export function AdminPage() {
     outline: "none",
   };
 
+  // Styling Label
   const labelStyle: React.CSSProperties = {
     color: "hsl(195 20% 40%)",
     fontSize: "12px",
@@ -116,7 +123,7 @@ export function AdminPage() {
     <div className="min-h-screen" style={{ background: "hsl(195 20% 97%)" }}>
       <div className="max-w-4xl mx-auto px-4 py-8">
 
-        {/* Header */}
+        {/* Bagian Atas / Header */}
         <div className="flex items-center gap-4 mb-6">
           <img src="/logo-smk.png" width={52} height={52} alt="Logo" className="object-contain" />
           <div>
@@ -129,7 +136,7 @@ export function AdminPage() {
           </div>
         </div>
 
-        {/* Message */}
+        {/* Pesan Notifikasi */}
         {msg && (
           <div className="rounded-lg px-4 py-3 mb-4 text-sm font-medium" style={{
             background: msg.type === "ok" ? "hsl(120 50% 95%)" : "hsl(0 50% 95%)",
@@ -142,7 +149,7 @@ export function AdminPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Quick Stats */}
+          {/* Statistik Singkat */}
           <div className="md:col-span-2 rounded-lg p-5 flex items-center justify-between" style={{ background: "#fff", border: "1px solid hsl(195 20% 86%)" }}>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: "hsl(195 20% 50%)" }}>Total Database</p>
@@ -157,7 +164,7 @@ export function AdminPage() {
             </button>
           </div>
 
-          {/* Countdown Setting */}
+          {/* Pengaturan Countdown */}
           <div className="rounded-lg p-5" style={{ background: "#fff", border: "1px solid hsl(195 20% 86%)" }}>
             <label style={labelStyle}>Set Waktu Kelulusan</label>
             <div className="flex flex-col gap-2">
@@ -182,7 +189,7 @@ export function AdminPage() {
           </div>
         </div>
 
-        {/* Add Form */}
+        {/* Form Tambah Siswa */}
         {showForm && (
           <div className="rounded-lg p-6 mb-6 shadow-sm border-2 animate-in fade-in slide-in-from-top-4" style={{ background: "#fff", borderColor: "hsl(195 100% 45%)" }}>
             <h2 className="font-bold text-sm mb-4" style={{ color: "hsl(195 100% 30%)" }}>Input Data Siswa Baru</h2>
@@ -262,7 +269,7 @@ export function AdminPage() {
           </div>
         )}
 
-        {/* Table */}
+        {/* Daftar Tabel */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-bold uppercase tracking-widest" style={{ color: "hsl(195 20% 40%)" }}>Database Siswa</h2>
           <button onClick={load} className="text-xs font-bold py-1 px-3 rounded hover:bg-white transition-colors" style={{ color: "hsl(195 100% 40%)" }}>Refresh Tabel</button>
@@ -289,7 +296,7 @@ export function AdminPage() {
                 </thead>
                 <tbody>
                   {siswaList.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-12 text-center" style={{ color: "hsl(195 20% 50%)" }}>Database kosong. Silaahkan tambah data siswa.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-12 text-center" style={{ color: "hsl(195 20% 50%)" }}>Database kosong. Silakan tambah data siswa.</td></tr>
                   ) : siswaList.map((s) => (
                     <tr key={s.nisn} style={{ borderBottom: "1px solid hsl(195 20% 92%)" }}
                       className="hover:bg-[hsl(195_20%_98%)] transition-colors">
@@ -321,7 +328,7 @@ export function AdminPage() {
           </div>
         )}
 
-        {/* Footer */}
+        {/* Bagian Bawah */}
         <div className="mt-12 text-center opacity-40">
           <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "hsl(195 20% 30%)" }}>
             {INFO_SEKOLAH.nama} &bull; Panel Administrasi v2.0
